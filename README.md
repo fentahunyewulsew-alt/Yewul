@@ -38,23 +38,23 @@
         <div class="file-list">
             <div class="file-item">
                 <span>መጽሐፍ ቅዱስ</span>
-                <a href="መጽሐፍ ቅዱስ .docx" download>አውርድ (Word)</a>
+                <a href="መጽሐፍ ቅዱስ .docx" download>አውርድ</a>
             </div>
             <div class="file-item">
                 <span>ጉባኤ ኒቂያ</span>
-                <a href="ጉባኤ ኒቂያ - Copy.pdf" download>አውርድ (PDF)</a>
+                <a href="ጉባኤ ኒቂያ - Copy.pdf" download>አውርድ</a>
             </div>
             <div class="file-item">
                 <span>ጉባኤ ኤፌሶን</span>
-                <a href="ጉባኤ ኤፌሶን - Copy.pdf" download>አውርድ (PDF)</a>
+                <a href="ጉባኤ ኤፌሶን - Copy.pdf" download>አውርድ</a>
             </div>
             <div class="file-item">
                 <span>ጉባኤ ኬልቄዶን</span>
-                <a href="ጉባኤ ኬልቄዶን - Copy.pdf" download>አውርድ (PDF)</a>
+                <a href="ጉባኤ ኬልቄዶን - Copy.pdf" download>አውርድ</a>
             </div>
              <div class="file-item">
                 <span>ጉባኤ ቆስጥንጥንያ</span>
-                <a href="ጉባኤ ቆስጥንጥንያ - C... " download>አውርድ (PDF)</a>
+                <a href="ጉባኤ ቆስጥንጥንያ - Copy.pdf" download>አውርድ</a>
             </div>
         </div>
     </div>
