@@ -14,8 +14,8 @@
         h3 { color: #fbbf24; border-bottom: 1px solid #374151; padding-bottom: 10px; }
         .file-list { text-align: left; list-style: none; padding: 0; }
         .file-item { background: #374151; margin: 10px 0; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .file-item a { color: #fbbf24; text-decoration: none; font-weight: bold; background: #1e3a8a; padding: 8px 15px; border-radius: 5px; font-size: 0.9em; }
-        .file-item span { font-size: 0.95em; color: #e5e7eb; }
+        .file-item a { color: white; text-decoration: none; font-weight: bold; background: #1e3a8a; padding: 10px 20px; border-radius: 8px; font-size: 0.9em; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .file-item span { font-size: 1em; color: #fbbf24; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -52,7 +52,7 @@
                 <span>ጉባኤ ኬልቄዶን</span>
                 <a href="ጉባኤ ኬልቄዶን - Copy.pdf" download>አውርድ</a>
             </div>
-             <div class="file-item">
+            <div class="file-item">
                 <span>ጉባኤ ቆስጥንጥንያ</span>
                 <a href="ጉባኤ ቆስጥንጥንያ - Copy.pdf" download>አውርድ</a>
             </div>
