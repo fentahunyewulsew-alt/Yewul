@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yewul Digital Library</title>
+    <style>
+        :root { --primary: #2563eb; --accent: #fbbf24; --bg: #0f172a; --card: #1e293b; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; background: var(--bg); color: white; text-align: center; direction: ltr; }
+        
+        /* Language Selector Styling */
+        .lang-switcher { padding: 10px; background: var(--card); border-bottom: 2px solid var(--accent); display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .lang-btn { background: #334155; color: white; border: none; padding: 5px 12px; border-radius: 5px; cursor: pointer; font-size: 13px; transition: 0.3s; }
+        .lang-btn.active { background: var(--accent); color: black; font-weight: bold; }
+
+        header { background: linear-gradient(rgba(15,23,42,0.8), rgba(15,23,42,0.8)), url('IMG_20260224_043626_122.jpg') center/cover; padding: 50px 20px; border-bottom: 4px solid var(--accent); }
+        .profile-img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--accent); background: white; }
+
+        .container { max-width: 600px; margin: auto; padding: 20px; }
+        .search-box { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #334155; background: #1e293b; color: white; margin-bottom: 20px; box-sizing: border-box; outline: none; }
+
+        .file-item { background: #2d3748; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #3e4b5e; display: flex; justify-content: space-between; align-items: center; }
+        .file-name { font-weight: bold; text-align: left; }
+        .btn-group { display: flex; gap: 5px; }
+        .btn { padding: 8px 12px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 12px; }
+        .btn-view { background: var(--accent); color: black; }
+        .btn-down { background: var(--primary); color: white; }
+
+        /* Settings Icon & Sidebar */
+        .settings-icon { position: absolute; top: 15px; right: 15px; font-size: 22px; cursor: pointer; z-index: 1001; }
+        .sidebar { position: fixed; right: -260px; top: 0; width: 240px; height: 100%; background: var(--card); transition: 0.3s; z-index: 1000; padding: 20px; text-align: left; }
+        .sidebar.active { right: 0; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 999; }
+        .overlay.active { display: block; }
+    </style>
+</head>
+<body>
+
+<div class="lang-switcher">
+    <button class="lang-btn active" onclick="changeLang('am', this)">አማርኛ</button>
+    <button class="lang-btn" onclick="changeLang('en', this)">English</button>
+    <button class="lang-btn" onclick="changeLang('ar', this)">العربية</button>
+    <button class="lang-btn" onclick="changeLang('es', this)">Español</button>
+</div>
+
+<div class="settings-icon" onclick="toggleSidebar()">⚙️</div>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+<div class="sidebar" id="sidebar">
+    <h3 id="menuTitle">ምናሌ</h3>
+    <a href="#" id="menuHome">🏠 መነሻ ገጽ</a>
+    <a href="https://t.me/YOUR_USERNAME">💬 Telegram</a>
+</div>
+
+<header>
+    <img src="IMG_20260224_043626_122.jpg" class="profile-img">
+    <h1 id="mainTitle">የየውልሰው መድረክ</h1>
+</header>
+
+<div class="container">
+    <input type="text" id="searchInput" class="search-box" placeholder="መጽሐፍ እዚህ ይፈልጉ..." oninput="searchFunc()">
+
+    <div id="bookList">
+        <div class="file-item">
+            <span class="file-name">መጽሐፍ ቅዱስ (Bible)</span>
+            <div class="btn-group">
+                <a href="https://docs.google.com/viewer?url=https://fentahunyewulsew-alt.github.io/Yewul/መጽሐፍ ቅዱስ .docx" target="_blank" class="btn btn-view viewText">አንብብ</a>
+                <a href="መጽሐፍ ቅዱስ .docx" download class="btn btn-down downText">አውርድ</a>
+            </div>
+        </div>
+        <div class="file-item">
+            <span class="file-name">ጉባኤ ኒቂያ (Nicaea)</span>
+            <div class="btn-group">
+                <a href="https://docs.google.com/viewer?url=https://fentahunyewulsew-alt.github.io/Yewul/ጉባኤ ኒቂያ - Copy.pdf" target="_blank" class="btn btn-view viewText">አንብብ</a>
+                <a href="ጉባኤ ኒቂያ - Copy.pdf" download class="btn btn-down downText">አውርድ</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const translations = {
+        am: { title: "የየውልሰው መድረክ", search: "መጽሐፍ እዚህ ይፈልጉ...", view: "አንብብ", down: "አውርድ", menu: "ምናሌ", home: "🏠 መነሻ ገጽ", dir: "ltr" },
+        en: { title: "Yewul Platform", search: "Search books here...", view: "Read", down: "Download", menu: "Menu", home: "🏠 Home", dir: "ltr" },
+        ar: { title: "منصة يولسو", search: "ابحث عن الكتب هنا...", view: "اقرأ", down: "تحميل", menu: "القائمة", home: "🏠 الصفحة الرئيسية", dir: "rtl" },
+        es: { title: "Plataforma Yewul", search: "Buscar libros aquí...", view: "Leer", down: "Bajar", menu: "Menú", home: "🏠 Inicio", dir: "ltr" }
+    };
+
+    function changeLang(lang, btn) {
+        // Update active button
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Update Text
+        document.getElementById('mainTitle').innerText = translations[lang].title;
+        document.getElementById('searchInput').placeholder = translations[lang].search;
+        document.getElementById('menuTitle').innerText = translations[lang].menu;
+        document.getElementById('menuHome').innerText = translations[lang].home;
+        
+        document.querySelectorAll('.viewText').forEach(el => el.innerText = translations[lang].view);
+        document.querySelectorAll('.downText').forEach(el => el.innerText = translations[lang].down);
+
+        // Update Direction (for Arabic)
+        document.body.style.direction = translations[lang].dir;
+    }
+
+    function searchFunc() {
+        let input = document.getElementById('searchInput').value.toLowerCase();
+        let items = document.getElementsByClassName('file-item');
+        for (let i = 0; i < items.length; i++) {
+            let name = items[i].querySelector('.file-name').innerText.toLowerCase();
+            items[i].style.display = name.includes(input) ? "flex" : "none";
+        }
+    }
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+    }
+</script>
+
+</body>
+</html>
