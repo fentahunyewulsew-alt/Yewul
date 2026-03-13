@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yewul Digital Library 2018</title>
+    <style>
+        :root { --primary: #2563eb; --accent: #fbbf24; --bg: #0f172a; --card: #1e293b; }
+        body { font-family: sans-serif; margin: 0; background: var(--bg); color: white; text-align: center; overflow-x: hidden; }
+        
+        header { background: linear-gradient(rgba(15,23,42,0.85), rgba(15,23,42,0.9)), url('IMG_20260224_043626_122.jpg') center/cover; padding: 60px 20px; border-bottom: 4px solid var(--accent); position: relative; }
+        .profile-img { width: 110px; height: 110px; border-radius: 50%; border: 3px solid var(--accent); background: white; object-fit: cover; }
+
+        /* Settings Sidebar */
+        .settings-trigger { position: absolute; top: 20px; right: 20px; font-size: 28px; cursor: pointer; color: white; z-index: 10; }
+        .sidebar { position: fixed; right: -300px; top: 0; width: 280px; height: 100%; background: #161b22; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000; padding: 0; text-align: left; box-shadow: -10px 0 30px rgba(0,0,0,0.5); }
+        .sidebar.active { right: 0; }
+        .sidebar-header { padding: 25px 20px; background: #0d1117; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center; }
+        
+        .menu-item { display: block; padding: 18px 25px; color: #c9d1d9; text-decoration: none; border-bottom: 1px solid #21262d; font-size: 16px; cursor: pointer; }
+        .menu-item:hover { background: #1f2937; color: var(--accent); }
+        
+        /* Language Sub-menu */
+        .lang-options { display: none; background: #0d1117; padding: 5px 0; border-bottom: 1px solid #21262d; }
+        .lang-options.show { display: block; }
+        .lang-choice { padding: 12px 40px; display: block; color: #8b949e; cursor: pointer; font-size: 14px; }
+        .lang-choice:hover { color: var(--accent); }
+        .lang-choice.active { color: var(--accent); font-weight: bold; }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; z-index: 999; }
+        .overlay.active { display: block; }
+
+        .container { max-width: 600px; margin: auto; padding: 20px; min-height: 80vh; }
+        .search-box { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #334155; background: #0f172a; color: white; margin-bottom: 25px; outline: none; box-sizing: border-box; font-size: 16px; }
+
+        .file-item { background: #1e293b; padding: 18px; border-radius: 15px; margin-bottom: 15px; border: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
+        .file-name { font-weight: bold; font-size: 15px; text-align: left; flex: 1; }
+        .btn-group { display: flex; gap: 8px; }
+        .btn { padding: 9px 14px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 12.5px; white-space: nowrap; }
+        .btn-view { background: var(--accent); color: #000; }
+        .btn-down { background: var(--primary); color: #fff; }
+
+        footer { padding: 30px; color: #8b949e; font-size: 14px; border-top: 1px solid #1e293b; margin-top: 40px; }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <span id="menuTitle" style="font-weight:bold; color:var(--accent);">ምናሌ</span>
+        <span onclick="toggleSidebar()" style="cursor:pointer; font-size:22px;">✕</span>
+    </div>
+    <div class="sidebar-menu">
+        <a href="#" class="menu-item" id="menuHome">🏠 መነሻ ገጽ</a>
+        
+        <div class="menu-item" onclick="toggleLangMenu()" id="menuLang">🌐 ቋንቋ ቀይር ▾</div>
+        <div class="lang-options" id="langOptions">
+            <span class="lang-choice active" onclick="changeLang('am', this)">አማርኛ</span>
+            <span class="lang-choice" onclick="changeLang('en', this)">English</span>
+            <span class="lang-choice" onclick="changeLang('ar', this)">العربية</span>
+            <span class="lang-choice" onclick="changeLang('es', this)">Español</span>
+        </div>
+
+        <a href="https://t.me/Justice_Yewul" target="_blank" class="menu-item" id="menuTele">💬 ቴሌግራም (Justice)</a>
+        <a href="#" class="menu-item" id="menuAbout">ℹ️ ስለ መድረኩ</a>
+    </div>
+</div>
+
+<header>
+    <div class="settings-trigger" onclick="toggleSidebar()">⚙️</div>
+    <img src="IMG_20260224_043626_122.jpg" class="profile-img">
+    <h1 id="mainTitle">የየውልሰው መድረክ</h1>
+</header>
+
+<div class="container">
+    <input type="text" id="searchInput" class="search-box" placeholder="መጽሐፍ እዚህ ይፈልጉ..." oninput="searchFunc()">
+
+    <div id="bookList">
+        <div class="file-item">
+            <span class="file-name">መጽሐፍ ቅዱስ (Bible)</span>
+            <div class="btn-group">
+                <a href="https://docs.google.com/viewer?url=https://fentahunyewulsew-alt.github.io/Yewul/መጽሐፍ ቅዱስ .docx" target="_blank" class="btn btn-view viewText">አንብብ</a>
+                <a href="መጽሐፍ ቅዱስ .docx" download class="btn btn-down downText">አውርድ</a>
+            </div>
+        </div>
+        <div class="file-item"><span class="file-name">ጉባኤ ኒቂያ (Nicaea)</span><div class="btn-group"><a href="https://docs.google.com/viewer?url=https://fentahunyewulsew-alt.github.io/Yewul/ጉባኤ ኒቂያ - Copy.pdf" target="_blank" class="btn btn-view viewText">አንብብ</a><a href="ጉባኤ ኒቂያ - Copy.pdf" download class="btn btn-down downText">አውርድ</a></div></div>
+        <div class="file-item"><span class="file-name">ጉባኤ ኤፌሶን (Ephesus)</span><div class="btn-group"><a href="https://docs.google.com/viewer?url=https://fentahunyewulsew-alt.github.io/Yewul/ጉባኤ ኤፌሶን - Copy.pdf" target="_blank" class="btn btn-view viewText">አንብብ</a><a href="ጉባኤ ኤፌሶን - Copy.pdf" download class="btn btn-down downText">አውርድ</a></div></div>
+        <div class="file-item"><span class="file-name">ጉባኤ ኬልቄዶን (Chalcedon)</span><div class="btn-group"><a href="https://docs.google.com/viewer?url=https://fentahunyewulsew-alt.github.io/Yewul/ጉባኤ ኬልቄዶን - Copy.pdf" target="_blank" class="btn btn-view viewText">አንብብ</a><a href="ጉባኤ ኬልቄዶን - Copy.pdf" download class="btn btn-down downText">አውርድ</a></div></div>
+        <div class="file-item"><span class="file-name">ጉባኤ ቆስጥንጥንያ (Constantinople)</span><div class="btn-group"><a href="https://docs.google.com/viewer?url=https://fentahunyewulsew-alt.github.io/Yewul/ጉባኤ ቆስጥንጥንያ - Copy.pdf" target="_blank" class="btn btn-view viewText">አንብብ</a><a href="ጉባኤ ቆስጥንጥንያ - Copy.pdf" download class="btn btn-down downText">አውርድ</a></div></div>
+    </div>
+</div>
+
+<footer>
+    <p id="footerText">© 2018 አ.ም የተሰራ | የየውልሰው ዲጂታል ቤተ-መጽሐፍ</p>
+</footer>
+
+<script>
+    const translations = {
+        am: { title: "የየውልሰው መድረክ", search: "መጽሐፍ እዚህ ይፈልጉ...", view: "አንብብ", down: "አውርድ", menu: "ምናሌ", home: "🏠 መነሻ ገጽ", lang: "🌐 ቋንቋ ቀይር ▾", tele: "💬 ቴሌግራም", about: "ℹ️ ስለ መድረኩ", footer: "© 2018 አ.ም የተሰራ | የየውልሰው ዲጂታል ቤተ-መጽሐፍ", dir: "ltr" },
+        en: { title: "Yewul Platform", search: "Search books here...", view: "Read", down: "Download", menu: "Menu", home: "🏠 Home", lang: "🌐 Change Language ▾", tele: "💬 Telegram", about: "ℹ️ About", footer: "© 2018 E.C | Yewul Digital Library", dir: "ltr" },
+        ar: { title: "منصة يولسو", search: "ابحث عن الكتب هنا...", view: "اقرأ", down: "تحميل", menu: "القائمة", home: "🏠 الرئيسية", lang: "🌐 تغيير اللغة ▾", tele: "💬 تيليجرام", about: "ℹ️ حول", footer: "© 2018 | المكتبة الرقمية", dir: "rtl" },
+        es: { title: "Plataforma Yewul", search: "Buscar libros aquí...", view: "Leer", down: "Bajar", menu: "Menú", home: "🏠 Inicio", lang: "🌐 Cambiar idioma ▾", tele: "💬 Telegram", about: "ℹ️ Acerca de", footer: "© 2018 | Biblioteca Digital", dir: "ltr" }
+    };
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+    }
+
+    function toggleLangMenu() {
+        document.getElementById('langOptions').classList.toggle('show');
+    }
+
+    function changeLang(lang, btn) {
+        document.querySelectorAll('.lang-choice').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        document.getElementById('mainTitle').innerText = translations[lang].title;
+        document.getElementById('searchInput').placeholder = translations[lang].search;
+        document.getElementById('menuTitle').innerText = translations[lang].menu;
+        document.getElementById('menuHome').innerText = translations[lang].home;
+        document.getElementById('menuLang').innerText = translations[lang].lang;
+        document.getElementById('menuTele').innerText = translations[lang].tele;
+        document.getElementById('menuAbout').innerText = translations[lang].about;
+        document.getElementById('footerText').innerText = translations[lang].footer;
+        
+        document.querySelectorAll('.viewText').forEach(el => el.innerText = translations[lang].view);
+        document.querySelectorAll('.downText').forEach(el => el.innerText = translations[lang].down);
+
+        document.body.style.direction = translations[lang].dir;
+        document.getElementById('bookList').style.textAlign = (lang === 'ar' ? 'right' : 'left');
+        
+        // Close menus after selection
+        setTimeout(toggleSidebar, 500);
+    }
+
+    function searchFunc() {
+        let input = document.getElementById('searchInput').value.toLowerCase();
+        let items = document.getElementsByClassName('file-item');
+        for (let i = 0; i < items.length; i++) {
+            let name = items[i].querySelector('.file-name').innerText.toLowerCase();
+            items[i].style.display = name.includes(input) ? "flex" : "none";
+        }
+    }
+</script>
+
+</body>
+</html>
