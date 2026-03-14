@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yewul Library - Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0d1621; color: white; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: auto; }
+        
+        /* Header & Settings */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #1a2635; border-radius: 10px; margin-bottom: 20px; }
+        .lang-btn { background: #f1c40f; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        
+        /* Upload Box */
+        .upload-box { background: #1a2635; padding: 30px; border-radius: 15px; border: 2px dashed #f1c40f; text-align: center; margin-bottom: 30px; }
+        .upload-box input { margin: 15px 0; }
+        .main-btn { background: #f1c40f; color: #1a2635; padding: 12px 30px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; width: 100%; }
+        
+        /* File List */
+        .file-list { background: #1a2635; padding: 20px; border-radius: 10px; }
+        .file-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #2c3e50; }
+        .delete-btn { background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; }
+        
+        /* Telegram Floating Button */
+        .tg-btn { position: fixed; bottom: 20px; right: 20px; background: #0088cc; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        
+        /* Loading Bar */
+        .progress-container { width: 100%; background: #2c3e50; height: 8px; border-radius: 4px; display: none; margin-top: 15px; }
+        .progress-bar { width: 0%; height: 100%; background: #2ecc71; transition: 0.3s; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2 id="title">📚 Yewul Library</h2>
+        <button class="lang-btn" onclick="toggleLang()" id="langBtn">EN</button>
+    </div>
+
+    <div class="upload-box">
+        <h3 id="uploadTitle">📤 አዲስ መጽሐፍ ይጫኑ</h3>
+        <input type="file" id="filePicker">
+        <button onclick="handleUpload()" id="mainBtn" class="main-btn">ፋይሉን ጫን</button>
+        
+        <div class="progress-container" id="pContainer">
+            <div class="progress-bar" id="pBar"></div>
+        </div>
+        <p id="statusTxt" style="color: #f1c40f; margin-top: 10px;"></p>
+    </div>
+
+    <div class="file-list">
+        <h4 id="listTitle">የተጫኑ መጽሐፍት ዝርዝር</h4>
+        <div id="itemsContainer">እየፈለገ ነው...</div>
+    </div>
+</div>
+
+<a href="https://t.me/YourTelegramUsername" target="_blank" class="tg-btn">
+    <i class="fab fa-telegram-plane"></i>
+</a>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyD0aNWGu5ks476yfm4Q-FLxepkSWtYAJcI",
+        authDomain: "yewul-platform.firebaseapp.com",
+        projectId: "yewul-platform",
+        databaseURL: "https://yewul-platform-default-rtdb.firebaseio.com",
+        storageBucket: "yewul-platform.firebasestorage.app",
+        messagingSenderId: "731322746896",
+        appId: "1:731322746896:web:a2a9e7d9f0769b366d2295"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Cloudinary Config
+    const CLOUD_NAME = "dsbvs1h3w"; 
+    const UPLOAD_PRESET = "yewul_preset"; 
+
+    // --- Upload Function ---
+    window.handleUpload = async function() {
+        const file = document.getElementById('filePicker').files[0];
+        if (!file) return alert("Please select a file!");
+
+        const btn = document.getElementById('mainBtn');
+        const pBar = document.getElementById('pBar');
+        const pContainer = document.getElementById('pContainer');
+        const status = document.getElementById('statusTxt');
+
+        btn.disabled = true;
+        pContainer.style.display = "block";
+        pBar.style.width = "40%";
+        status.innerText = "Uploading to Cloud...";
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', UPLOAD_PRESET);
+
+        try {
+            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`, { method: 'POST', body: formData });
+            const data = await res.json();
+
+            if (data.secure_url) {
+                const newBookRef = push(ref(db, 'books'));
+                await set(newBookRef, { name: file.name, url: data.secure_url });
+                pBar.style.width = "100%";
+                status.innerText = "Success! ✅";
+                setTimeout(() => { pContainer.style.display="none"; status.innerText=""; }, 3000);
+            }
+        } catch (e) { alert("Error!"); }
+        btn.disabled = false;
+    };
+
+    // --- Realtime List ---
+    onValue(ref(db, 'books'), (snap) => {
+        const container = document.getElementById('itemsContainer');
+        container.innerHTML = "";
+        const data = snap.val();
+        if (data) {
+            Object.keys(data).forEach(id => {
+                const div = document.createElement('div');
+                div.className = "file-item";
+                div.innerHTML = `
+                    <span>${data[id].name}</span>
+                    <div>
+                        <a href="${data[id].url}" target="_blank" style="color:#2ecc71; margin-right:10px;">View</a>
+                        <button onclick="deleteBook('${id}')" class="delete-btn">Delete</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        } else { container.innerText = "No files found."; }
+    });
+
+    window.deleteBook = (id) => { if(confirm("Delete this?")) remove(ref(db, 'books/'+id)); };
+
+    // --- Language Toggle ---
+    let currentLang = 'am';
+    window.toggleLang = () => {
+        currentLang = currentLang === 'am' ? 'en' : 'am';
+        document.getElementById('langBtn').innerText = currentLang === 'am' ? 'EN' : 'አማ';
+        document.getElementById('uploadTitle').innerText = currentLang === 'am' ? '📤 አዲስ መጽሐፍ ይጫኑ' : '📤 Upload New Book';
+        document.getElementById('mainBtn').innerText = currentLang === 'am' ? 'ፋይሉን ጫን' : 'Upload Now';
+        document.getElementById('listTitle').innerText = currentLang === 'am' ? 'የተጫኑ መጽሐፍት ዝርዝር' : 'Uploaded Books List';
+    };
+</script>
+</body>
+</html>
