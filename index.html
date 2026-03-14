@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yewul Digital Library</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --bg: #0d1621; --card: #1a2635; --accent: #f1c40f; --blue: #2563eb; --red: #e74c3c; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; margin: 0; padding: 15px; text-align: center; }
+        
+        /* Header & Profile Section */
+        header { position: relative; padding-top: 25px; }
+        .settings-btn { position: absolute; right: 10px; top: 10px; font-size: 30px; cursor: pointer; color: #7f8c8d; }
+        .profile-ring { width: 130px; height: 130px; border: 4px solid var(--accent); border-radius: 50%; margin: 0 auto; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #000; }
+        .profile-ring img { width: 100%; height: 100%; object-fit: cover; }
+        .platform-name { font-size: 28px; font-weight: bold; margin: 15px 0 5px; }
+        .yellow-line { border-bottom: 3px solid var(--accent); width: 100%; margin: 10px 0; }
+        .estab-text { color: var(--accent); font-weight: bold; font-size: 14px; margin-bottom: 20px; }
+
+        /* Search Bar */
+        .search-box { width: 95%; max-width: 500px; padding: 12px; background: #162130; border: 1px solid #2c3e50; border-radius: 10px; color: white; margin-bottom: 20px; outline: none; }
+
+        /* Books List */
+        .book-item { background: var(--card); border-radius: 12px; padding: 15px; margin: 10px auto; max-width: 550px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #2c3e50; }
+        .book-name { font-weight: bold; text-align: left; flex: 1; font-size: 15px; }
+        .btn-group { display: flex; gap: 8px; }
+        .btn { padding: 8px 15px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 13px; cursor: pointer; border: none; }
+        .btn-view { background: var(--accent); color: black; }
+        .btn-down { background: var(--blue); color: white; }
+
+        /* Settings Modal */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }
+        .modal-content { background: var(--card); margin: 5% auto; padding: 25px; width: 85%; max-width: 400px; border-radius: 20px; border: 2px solid var(--accent); text-align: left; position: relative; }
+        .close-btn { position: absolute; right: 20px; top: 15px; font-size: 24px; cursor: pointer; }
+        .modal-title { color: var(--accent); font-size: 20px; font-weight: bold; margin-bottom: 15px; }
+        label { display: block; margin: 15px 0 5px; font-weight: bold; font-size: 14px; }
+        select, input[type="file"] { width: 100%; padding: 10px; border-radius: 8px; background: #0d1621; color: white; border: 1px solid #2c3e50; margin-bottom: 10px; }
+        .action-btn { background: var(--accent); color: black; border: none; padding: 12px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .refresh-btn { background: #27ae60; color: white; }
+        .del-list { margin-top: 15px; max-height: 150px; overflow-y: auto; background: #0d1117; padding: 10px; border-radius: 8px; border: 1px solid #2c3e50; }
+        .del-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #2c3e50; font-size: 12px; align-items: center; }
+        .btn-del { background: var(--red); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<header>
+    <i class="fas fa-cog settings-btn" onclick="openMod()"></i>
+    <div class="profile-ring">
+        <img src="https://res.cloudinary.com/dsbvs1h3w/image/upload/v1741951566/1000010372_yubv8s.jpg" alt="Profile">
+    </div>
+    <h1 class="platform-name" id="mainTitle">የየውልሰው መድረክ</h1>
+    <div class="yellow-line"></div>
+    <div class="estab-text" id="estDate">የተመሰረተበት 2018 ዓ.ም</div>
+</header>
+
+<input type="text" id="search" class="search-box" placeholder="መጽሐፍት እዚህ ይፈልጉ..." onkeyup="searchBooks()">
+
+<div id="bookContainer">
+    <div class="book-item"><span class="book-name" id="b1">መጽሐፍ ቅዱስ (Bible)</span><div class="btn-group"><a href="መጽሐፍ ቅዱስ .docx" target="_blank" class="btn btn-view vTxt">አንብብ</a><a href="መጽሐፍ ቅዱስ .docx" download class="btn btn-down dTxt">አውርድ</a></div></div>
+    <div class="book-item"><span class="book-name" id="b2">ጉባኤ ኒቂያ (Nicaea)</span><div class="btn-group"><a href="ጉባኤ ኒቂያ - Copy.pdf" target="_blank" class="btn btn-view vTxt">አንብብ</a><a href="ጉባኤ ኒቂያ - Copy.pdf" download class="btn btn-down dTxt">አውርድ</a></div></div>
+    <div class="book-item"><span class="book-name" id="b3">ጉባኤ ኤፌሶን (Ephesus)</span><div class="btn-group"><a href="ጉባኤ ኤፌሶን - Copy.pdf" target="_blank" class="btn btn-view vTxt">አንብብ</a><a href="ጉባኤ ኤፌሶን - Copy.pdf" download class="btn btn-down dTxt">አውርድ</a></div></div>
+    <div class="book-item"><span class="book-name" id="b4">ጉባኤ ኬልቄዶን (Chalcedon)</span><div class="btn-group"><a href="ጉባኤ ኬልቄዶን - Copy.pdf" target="_blank" class="btn btn-view vTxt">አንብብ</a><a href="ጉባኤ ኬልቄዶን - Copy.pdf" download class="btn btn-down dTxt">አውርድ</a></div></div>
+    <div class="book-item"><span class="book-name" id="b5">ጉባኤ ቁስጥንጥንያ</span><div class="btn-group"><a href="ጉባኤ ቆስጥንጥንያ - Copy.pdf" target="_blank" class="btn btn-view vTxt">አንብብ</a><a href="ጉባኤ ቆስጥንጥንያ - Copy.pdf" download class="btn btn-down dTxt">አውርድ</a></div></div>
+    <div id="dynamicArea"></div>
+</div>
+
+<div id="setMod" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeMod()">&times;</span>
+        <div class="modal-title" id="mH">⚙️ ሴቲንግ</div>
+        
+        <label id="lL">🌐 ቋንቋ መቀየሪያ</label>
+        <select id="langSel" onchange="applyLang()">
+            <option value="am">አማርኛ</option>
+            <option value="en">English</option>
+            <option value="ge">ግዕዝ</option>
+            <option value="ti">ትግርኛ</option>
+            <option value="or">Oromoo</option>
+            <option value="wo">Wolaytta</option>
+        </select>
+
+        <label id="lU">📤 አዲስ ፋይል ጫን</label>
+        <input type="file" id="fIn">
+        <button class="action-btn" onclick="upload()" id="bUp">ወደ ሰርቨር ላክ</button>
+        <p id="upSt" style="font-size:11px; text-align:center;"></p>
+
+        <button class="action-btn refresh-btn" onclick="location.reload()" id="bRf">🔄 ገጹን አድስ (Refresh)</button>
+
+        <label id="lD" style="margin-top:20px;">🗑️ ፋይሎችን አጥፋ</label>
+        <div id="adminArea" class="del-list">እየፈለገ ነው...</div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = { 
+        apiKey: "AIzaSyD0aNWGu5ks476yfm4Q-FLxepkSWtYAJcI", 
+        authDomain: "yewul-platform.firebaseapp.com", 
+        projectId: "yewul-platform", 
+        databaseURL: "https://yewul-platform-default-rtdb.firebaseio.com", 
+        storageBucket: "yewul-platform.firebasestorage.app", 
+        messagingSenderId: "731322746896", 
+        appId: "1:731322746896:web:a2a9e7d9f0769b366d2295" 
+    };
+    
+    const app = initializeApp(firebaseConfig); 
+    const db = getDatabase(app);
+
+    window.openMod = () => document.getElementById('setMod').style.display = 'block';
+    window.closeMod = () => document.getElementById('setMod').style.display = 'none';
+
+    window.applyLang = () => {
+        const l = document.getElementById('langSel').value;
+        const t = {
+            am: {mt:"የየውልሰው መድረክ", b1:"መጽሐፍ ቅዱስ", b2:"ጉባኤ ኒቂያ", b3:"ጉባኤ ኤፌሶን", b4:"ጉባኤ ኬልቄዶን", b5:"ጉባኤ ቁስጥንጥንያ", v:"አንብብ", d:"አውርድ", sh:"መጽሐፍት እዚህ ይፈልጉ...", up:"ወደ ሰርቨር ላክ", ref:"🔄 ገጹን አድስ", del:"🗑️ ፋይሎችን አጥፋ", est:"የተመሰረተበት 2018 ዓ.ም"},
+            en: {mt:"Yewul Platform", b1:"Holy Bible", b2:"Nicaea Council", b3:"Ephesus Council", b4:"Chalcedon Council", b5:"Constantinople", v:"Read", d:"Download", sh:"Search books...", up:"Upload File", ref:"🔄 Refresh Page", del:"🗑️ Delete Files", est:"Established in 2018"},
+            ge: {mt:"የየውልሰው መድረክ", b1:"መጽሐፍ ቅዱስ", b2:"ጉባኤ ኒቂያ", b3:"ጉባኤ ኤፌሶን", b4:"ጉባኤ ኬልቄዶን", b5:"ጉባኤ ቁስጥንጥንያ", v:"አንብብ", d:"አውርድ", sh:"ሐሥሥ መጻሕፍት...", up:"ወደ ሰርቨር ላክ", ref:"🔄 ገጹን አድስ", del:"🗑️ መጻሕፍት ደምስስ", est:"ዘተመስረተ በ፳፻፲፰ ዓ.ም"},
+            ti: {mt:"የየውልሰው መድረክ", b1:"መጽሓፍ ቅዱስ", b2:"ጉባኤ ኒቂያ", b3:"ጉባኤ ኤፌሶን", b4:"ጉባኤ ኬልቄዶን", b5:"ጉባኤ ቁስጥንጥንያ", v:"አንብብ", d:"አውርድ", sh:"መጻሕፍቲ ድለዩ...", up:"ሰደድ", ref:"🔄 ገጹን አድስ", del:"🗑️ ፋይላት ሰርዝ", est:"ዝተመስረተ 2018 ዓ.ም"},
+            or: {mt:"Yewul Platform", b1:"Macaafa Qulqulluu", b2:"Nicaea Council", b3:"Ep
